@@ -83,3 +83,54 @@ class SIM5(Scrapper):
         url = self.__create_user_url("max-prices")
         response = self.post_request(url, data=data, headers = headers)
         return response
+    
+    def delete_price_limit(self, token=None, product_name: str = "facebook"):
+        token = self.__choose_token(token)
+        headers = self.__headers
+        headers['Authorization'] = f"Bearer {token}"
+        url = self.__create_user_url(f"max-prices")
+        data = {
+            "product_name": product_name
+        }
+        response = self.delete_request(url, headers = headers, data=data)
+        return response
+    
+    def get_products_list(self, country: str = "england", operator: str = "any"):
+        headers = self.__headers
+        url = self.__create_guest_url(f"products/{country}/{operator}")
+        response = self.get_request_json(url, headers = headers)
+        return response
+    
+    def get_prices_list(self):
+        headers = self.__headers
+        url = self.__create_guest_url("prices")
+        response = self.get_request_json(url, headers = headers)
+        return response
+
+    def get_prices_by_country(self, country: str = "england"):
+        headers = self.__headers
+        url = self.__create_guest_url(f"prices")
+        params = {
+            "country": country
+        }
+        response = self.get_request_json(url, headers = headers, params = params)
+        return response
+    
+    def get_prices_by_product(self, product_name: str = "facebook"):
+        headers = self.__headers
+        url = self.__create_guest_url(f"prices")
+        params = {
+            "product_name": product_name
+        }
+        response = self.get_request_json(url, headers = headers, params = params)
+        return response
+    
+    def get_prices_by_country_and_product(self, country: str = "england", product_name: str = "facebook"):
+        headers = self.__headers
+        url = self.__create_guest_url(f"prices")
+        params = {
+            "country": country,
+            "product_name": product_name
+        }
+        response = self.get_request_json(url, headers = headers, params = params)
+        return response

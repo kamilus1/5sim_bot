@@ -90,5 +90,14 @@ class Scrapper(ABC):
     def put_request(self, url, data, **kwargs):
         response = self.__put_request(url, data, **kwargs)
         return response.json()
+    
+    def __delete_request(self, url, **kwargs):
+        response = requests.delete(url, **kwargs)
+        response.raise_for_status()
+        return response
+    
+    def delete_request(self, url, **kwargs):
+        response = self.__delete_request(url, **kwargs)
+        return response
 
         
