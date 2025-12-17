@@ -1,10 +1,7 @@
 import requests
 from requests import Response
-import requests
 import asyncio
 import aiohttp
-import selenium
-import os
 from enum import StrEnum
 from abc import ABC
 from typing import Any
@@ -54,11 +51,16 @@ class Scrapper(ABC):
         response.raise_for_status()
         return response
     
-    async def __async_get_request(self, url, **kwargs) -> aiohttp.ClientResponse:
+    async def __async_get_request(self, url, **kwargs) -> str | dict | Any:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, **kwargs) as response:
                 response.raise_for_status()
-                return await response
+                # `content_type = response.headers.get('Content-Type', '')
+                return response
+    
+    async def async_get_request(self, url, **kwargs) -> aiohttp.ClientResponse:
+        response = await self.__async_get_request(url, **kwargs)
+        return response
     
     
     def get_request_text(self, url, **kwargs):
@@ -73,6 +75,16 @@ class Scrapper(ABC):
         response = requests.post(url, data, **kwargs)
         response.raise_for_status()
         return response   
+    
+    async def __async_post_request(self, url, data, **kwargs):
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, data=data, **kwargs) as response:
+                response.raise_for_status()
+                return response
+    
+    async def async_post_request(self, url, data, **kwargs):
+        response = await self.__async_post_request(url, data, **kwargs)
+        return response
     
     def post_request(self, url, data, **kwargs):
         response = self.__post_request(url, data, **kwargs)
