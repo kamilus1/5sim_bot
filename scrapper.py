@@ -5,6 +5,7 @@ import aiohttp
 from enum import StrEnum
 from abc import ABC
 from typing import Any
+from bs4 import BeautifulSoup
 
 class RequestType(StrEnum):
     GET = "get"
@@ -16,6 +17,7 @@ class ContentType(StrEnum):
     HTML = "html"
     JSON = "json"
     XML = "xml"
+    ANY = "any"
 
 class Scrapper(ABC):
     __base_url = ""
@@ -24,10 +26,15 @@ class Scrapper(ABC):
         self.use_selenium = use_selenium
         self.proxy_list = proxy_list
 
-    def get_data(self, url, request_type: RequestType = RequestType.GET, **kwargs) -> str | dict | Any:
+    def get_data(self, url, request_type: RequestType = RequestType.GET, content_type: ContentType = ContentType.ANY, **kwargs) -> str | dict | Any:
         if request_type == RequestType.GET:
             response = self.__get_request(url, kwargs)
-            return response
+            if content_type == ContentType.HTML:
+                return BeautifulSoup(response.text, 'html.parser')
+            elif content_type == ContentType.JSON:
+                return response.json()
+            else:
+                return response.text
         elif request_type == RequestType.POST:
             pass
         elif request_type == RequestType.PUT:
